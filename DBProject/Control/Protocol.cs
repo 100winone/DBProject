@@ -155,17 +155,92 @@ namespace DBProject.Control
         }
         #endregion
 
-        #region ASCII_OP_66
+        
         [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
 
         public class ASCII_OP_66
         {
+
+            public ASCII_DATE send_date = new ASCII_DATE();
+            public ASCII_TIME send_time = new ASCII_TIME();
+            public ASCII_DATE occur_date = new ASCII_DATE();
+            public ASCII_TIME occur_time = new ASCII_TIME();
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public char [] route_id;
+            public ASCII_POS pos = new ASCII_POS();
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] heading;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] bus_speed;
+
+            public ASCII_DEVICE_STAT device_stat = new ASCII_DEVICE_STAT();
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public char[] bnode_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] brn_seqno;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public char[] check_sum;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] // 아직모름
-            public char[] etx;             //데이터길이
+            public char[] dptc_seqno;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char[] travel_time;
+
+            public char bop_stat;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char[] cdma_grade;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] reserved;
         }
-        #endregion
+               
+        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+
+        public class ASCII_OP_67
+        {
+
+            public ASCII_DATE send_date = new ASCII_DATE();
+            public ASCII_TIME send_time = new ASCII_TIME();
+            public ASCII_DATE occur_date = new ASCII_DATE();
+            public ASCII_TIME occur_time = new ASCII_TIME();
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public char[] route_id;
+            public ASCII_POS pos = new ASCII_POS();
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] heading;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] bus_speed;
+
+            public ASCII_DEVICE_STAT device_stat = new ASCII_DEVICE_STAT();
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public char[] bnode_id;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] brn_seqno;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char[] service_time;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char[] travel_time;
+
+            public char nostop;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char[] fdoor_time;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char[] bdoor_time;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char[] dptc_seqno;
+
+            char bop_stat;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char[] cdma_grade;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public char[] reserved;
+        }
+        
 
         #region ASCII_POS
         [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -213,9 +288,9 @@ namespace DBProject.Control
         public class ASCII_DEVICE_STAT
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public char[] bit0;
+            public char bit0;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] // MCU
-            public char[] bit1;                                  // 카드단말기
+            public char bit1;                                  // 카드단말기
         }
         #endregion
     }
