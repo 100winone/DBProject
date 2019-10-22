@@ -127,15 +127,95 @@ namespace DBProject.Control
         }
 
         //ASCII HEADER
-        #region Head
+        #region ASCII_Header
         [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
 
-        public class ASCII_HEAD
+        public class ASCII_HEADER
         {
-            public byte [] STX ;                //시작부호(0x02)
-            public ushort bid_no;                //장치ID
-            public byte opcode;                 //opcode
-            public ushort Length;             //데이터길이
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char [] STX ;                //시작부호(0x53)
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char [] bid_no;                //장치ID
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char [] opcode;                 //opcode
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public char [] Length;             //데이터길이
+        }
+        #endregion
+
+        #region ASCII_Tail
+        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+
+        public class ASCII_TAIL
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char[] check_sum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] // 아직모름
+            public char[] etx;             //데이터길이
+        }
+        #endregion
+
+        #region ASCII_OP_66
+        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+
+        public class ASCII_OP_66
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char[] check_sum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] // 아직모름
+            public char[] etx;             //데이터길이
+        }
+        #endregion
+
+        #region ASCII_POS
+        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+
+        public class ASCII_POS
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public char[] pos_x;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public char[] pos_y;
+        }
+        #endregion
+
+        #region ASCII_DATE
+        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+
+        public class ASCII_DATE
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char[] yyyy;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] 
+            public char[] mm;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char[] dd;
+        }
+        #endregion
+
+        #region ASCII_TIME
+        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+
+        public class ASCII_TIME
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char[] hh;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] 
+            public char[] mi;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] 
+            public char[] ss;
+        }
+        #endregion
+
+        #region ASCII_DEVICE_STAT
+        [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+
+        public class ASCII_DEVICE_STAT
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public char[] bit0;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] // MCU
+            public char[] bit1;                                  // 카드단말기
         }
         #endregion
     }
