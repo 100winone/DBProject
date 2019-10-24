@@ -17,7 +17,7 @@ namespace DBProject
         public static int tt; // 데이터 선택
         public static int asc; // ascii or binary
         public static string bbus;
-
+        public static bool isrun;
         public ArrayList nbus = new ArrayList();
         public ArrayList nbbus = new ArrayList();
         int i;

@@ -17,6 +17,7 @@ using DBProject.Control;
 using static DBProject.Control.ASCProtocolcs;
 using static DBProject.Control.Protocol;
 
+
 namespace DBProject
 {
     public partial class Form1 : Form
@@ -97,9 +98,17 @@ BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, 
             try
             {
                 if (dt == null)
+                {
                     listBox1.Items.Add("연결실패");
+                    Form2.isrun = false;
+                }
+                    
                 else
+                {
+                    Form2.isrun = true;
                     listBox1.Items.Add("연결성공");
+                }
+                    
             }
             catch (Exception)
             {
@@ -153,6 +162,10 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
                 if (!busnum.Contains(Convert.ToString(dt.Rows[i][0])))
                     busnum.Add(dt.Rows[i][0]);
             }
+
+            timer1.Interval = 1000;
+            timer1.Start();
+            Form2.isrun = false;
         }
 
 
@@ -727,6 +740,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             {
                 if(tc.Connected == true)
                 {
+                    Form2.isrun = true;
                     string a = msg;
                     byte[] sendbuf = Encoding.ASCII.GetBytes(a);
                     NetworkStream stream = tc.GetStream();
@@ -736,6 +750,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             catch (Exception ex)
             {
                 tc.Close();
+                Form2.isrun = false ;
                 MessageBox.Show(ex.Message);
             }
         }
@@ -746,6 +761,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             {
                 if (tc.Connected == true)
                 {
+                    
                     byte[] sendbuf = msg;
                     NetworkStream stream = tc.GetStream();
                     stream.Write(sendbuf, 0, sendbuf.Length);
@@ -758,8 +774,10 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             catch (Exception ex)
             {
                 tc.Close();
+                Form2.isrun = true;
                 MessageBox.Show(ex.Message);
             }
+            Form2.isrun = false;
         }
 
         public static char[] cut(int a, string table)
@@ -783,6 +801,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
                 bResult = tc.Connected;
                 if (tc.Connected)
                 {
+                    Form2.isrun = true;
                     ns1 = tc.GetStream();
                 }
             }
@@ -794,6 +813,19 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
 
             return bResult;
         }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (Form2.isrun == true)
+            {
+                picBoxDBState.Image = Properties.Resources.On;
+            }
+            else
+            {
+                picBoxDBState.Image = Properties.Resources.Off;
+            }
+        }
+
         public static byte[] ToByteArray(String hex)
         {
             byte[] bytes = null;
@@ -819,5 +851,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             }
             return DateTime.Now;
         }
+
+        
     }
 }
