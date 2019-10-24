@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using DBProject.Control;
+using static DBProject.Control.ASCProtocolcs;
 using static DBProject.Control.Protocol;
 
 namespace DBProject
@@ -45,21 +46,21 @@ namespace DBProject
         {
             if (Form2.tt == 0)
             {
-                if (Form2.sel == 0)
-                    sql = @"select*from BUSBRNINHISTORY";
+                if (Form2.sel == 0)               
+                    sql = "select*from BUSBRNINHISTORY";     
                 if (Form2.sel == 1)
-                    sql = @"select* from BUSBRNINHISTORY where BRN_OCCURYMDHMS like '2019101408%' ORDER BY BRN_OCCURYMDHMS ASC";
+                    sql = "select* from BUSBRNINHISTORY where BRN_OCCURYMDHMS like '2019101408%' ORDER BY BRN_OCCURYMDHMS ASC";
                 if (Form2.sel == 2)
-                    sql = "select* from BUSBRNINHISTORY where  BID_NO IN (" + Form2.bbus + ")";
+                    sql = "select* from BUSBRNINHISTORY where  BID_NO IN (" + Form2.bbus + ") ORDER BY BRN_OCCURYMDHMS ASC";
             }
             if (Form2.tt == 1)
             {
                 if (Form2.sel == 0)
-                    sql = @"select*from BUSBRNOUTHISTORY";
+                    sql = "select*from BUSBRNOUTHISTORY";
                 if (Form2.sel == 1)
-                    sql = @"select* from BUSBRNOUTHISTORY where BRN_OCCURYMDHMS like '2019101408%' ORDER BY BRN_OCCURYMDHMS ASC";
+                    sql = "select* from BUSBRNOUTHISTORY where BRN_OCCURYMDHMS like '2019101408%' ORDER BY BRN_OCCURYMDHMS ASC";
                 if (Form2.sel == 2)
-                    sql = "select* from BUSBRNOUTHISTORY where  BID_NO IN (" + Form2.bbus + ")";
+                    sql = "select* from BUSBRNOUTHISTORY where  BID_NO IN (" + Form2.bbus + ") ORDER BY BRN_OCCURYMDHMS ASC";
             }
             if (Form2.tt == 2)
             {
@@ -69,7 +70,7 @@ namespace DBProject
 BRN_TRAVELTIME, BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONSTOP, BRN_INYMDHMS, BRN_SENDYMDHMS, BRN_RCVYMDHMS, 
 BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNOUTHISTORY UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, 
 BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, 
-CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY)";
+CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY) where BRN_OCCURYMDHMS like '2019101408595%'";
                 }
                 if (Form2.sel == 1)
                 {
@@ -87,12 +88,11 @@ BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONS
 FROM BUSBRNOUTHISTORY 
 UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, 
 BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY)
- where  BID_NO IN (" + Form2.bbus + ")";
+ where  BID_NO IN (" + Form2.bbus + ") ORDER BY BRN_OCCURYMDHMS ASC";
                 }
             }
             DBConnect dbConnect = new DBConnect();
             dt = dbConnect.GetTable(sql);
-
             
             try
             {
@@ -109,13 +109,14 @@ BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, 
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            LoadDB();
+                LoadDB();        
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             Form2.sel = 0;
             Form2.tt = 0;
+            Form2.asc = 0;
             string url = Environment.CurrentDirectory + @"..\..\Config.xml";
             try
             {
@@ -142,7 +143,7 @@ BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONS
 FROM BUSBRNOUTHISTORY 
 UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, 
 BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY)
-where BRN_OCCURYMDHMS like '2019101408595%'";
+where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
 
             DBConnect dbConnect = new DBConnect();
             dt = dbConnect.GetTable(sql);
@@ -154,9 +155,6 @@ where BRN_OCCURYMDHMS like '2019101408595%'";
             }
         }
 
-        
-
-        
 
         public void LoadDB()
         {
@@ -168,153 +166,49 @@ where BRN_OCCURYMDHMS like '2019101408595%'";
             {
                 for(int z = 0; z < dt.Columns.Count; z++)
                 {
-                    //if (!dictionary.ContainsKey(Convert.ToString(z)))
-                    //{
-                    //    Loglist packet = new Loglist(z);
-                    //    packet.log.Add(dt.Rows[i][z].ToString());
-                    //    dictionary.Add((Convert.ToString(z)), packet);
-                        
-
-                    //}
-                    //else
-                    //{
-                    //    var packet = dictionary[Convert.ToString(z)];
-                    //    packet.log.Add(dt.Rows[i][z].ToString());
-                    //}
-
                     arr[z] = dt.Rows[i][z].ToString();
                     if (z == dt.Columns.Count - 1)
                     {
-                        HEAD head = new HEAD();
 
-                        head.STX = 0x02;
 
-                        if (Form2.tt == 0)
-                        {
-                            head.opcode = 0x66;
-                            head.Length = ushort.Parse(Marshal.SizeOf<BIS_OP_66>().ToString());
-                        }
-                        if (Form2.tt == 1)
-                        {
-                            head.opcode = 0x67;
-                            head.Length = ushort.Parse(Marshal.SizeOf<BIS_OP_67>().ToString());
-                        }
-                        if (Form2.tt == 2)
+                        if (Form2.asc == 0)
                         {
 
-                            if (string.IsNullOrEmpty(dt.Rows[i][14].ToString())) //BUSBRNINHISTORY
+                            HEAD head = new HEAD();
+
+                            head.STX = 0x02;
+
+                            if (Form2.tt == 0)
                             {
                                 head.opcode = 0x66;
                                 head.Length = ushort.Parse(Marshal.SizeOf<BIS_OP_66>().ToString());
                             }
-                            else                                  //BUSBRNOUTHISTORY
+                            if (Form2.tt == 1)
                             {
                                 head.opcode = 0x67;
                                 head.Length = ushort.Parse(Marshal.SizeOf<BIS_OP_67>().ToString());
                             }
-                        }
+                            if (Form2.tt == 2)
+                            {
 
-                        head.bid_no = ushort.Parse(dt.Rows[i][0].ToString());
+                                if (string.IsNullOrEmpty(dt.Rows[i][14].ToString())) //BUSBRNINHISTORY
+                                {
+                                    head.opcode = 0x66;
+                                    head.Length = ushort.Parse(Marshal.SizeOf<BIS_OP_66>().ToString());
+                                }
+                                else                                  //BUSBRNOUTHISTORY
+                                {
+                                    head.opcode = 0x67;
+                                    head.Length = ushort.Parse(Marshal.SizeOf<BIS_OP_67>().ToString());
+                                }
+                            }
 
-                        BIS_OP_66 body = new BIS_OP_66();
-                        BIS_OP_67 body2 = new BIS_OP_67();
+                            head.bid_no = ushort.Parse(dt.Rows[i][0].ToString());
 
-                        if (Form2.tt == 0)
-                        {
-                            BIS_DATE snd_date = new BIS_DATE();
-                            BIS_TIME snd_time = new BIS_TIME();
-                            BIS_DATE ocr_date = new BIS_DATE();
-                            BIS_TIME ocr_time = new BIS_TIME();
-                            snd_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
-                            snd_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
-                            snd_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
-                            body.SendDate = snd_date;
-                            snd_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
-                            snd_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
-                            snd_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
-                            body.SendTime = snd_time;
-                            ocr_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
-                            ocr_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
-                            ocr_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
-                            body.OccurDate = ocr_date;
-                            ocr_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
-                            ocr_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
-                            ocr_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
-                            body.OccurTime = ocr_time;
-                            body.Route_id = UInt64.Parse(dt.Rows[i][2].ToString());
-                            BIS_POS pos = new BIS_POS();
+                            BIS_OP_66 body = new BIS_OP_66();
+                            BIS_OP_67 body2 = new BIS_OP_67();
 
-                            double posx = double.Parse(dt.Rows[i][10].ToString());
-                            posx *= 100;
-                            pos.pos_x = long.Parse(posx.ToString());
-                            // pos.pos_y = double.Parse(dt.Rows[i][11].ToString());
-                            double posy = double.Parse(dt.Rows[i][11].ToString());
-                            posy *= 100;
-                            pos.pos_y = long.Parse(posy.ToString());
-                            body.Pos = pos;
-                            body.heading = ushort.Parse(dt.Rows[i][14].ToString());
-                            body.bus_speed = ushort.Parse(dt.Rows[i][9].ToString());
-                            body.bnode_id = UInt64.Parse(dt.Rows[i][3].ToString());
-                            body.bm_seqno = ushort.Parse(dt.Rows[i][4].ToString());
-                            body.dptc_seqno = ushort.Parse(dt.Rows[i][6].ToString());
-                            body.travel_time = ushort.Parse(dt.Rows[i][8].ToString());
-                            body.sed_failed = char.Parse(dt.Rows[i][7].ToString());  ////
-                                                                                     // body.cdma_grade = int.Parse(arr[15]);   //DB값이 null이라 오류,,
-                            body.Reserved = new byte[2];
-                        }
-                        if (Form2.tt == 1)
-                        {
-                            BIS_DATE snd_date = new BIS_DATE();
-                            BIS_TIME snd_time = new BIS_TIME();
-                            BIS_DATE ocr_date = new BIS_DATE();
-                            BIS_TIME ocr_time = new BIS_TIME();
-                            snd_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
-                            snd_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
-                            snd_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
-                            body2.SendDate = snd_date;
-                            snd_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
-                            snd_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
-                            snd_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
-                            body2.SendTime = snd_time;
-                            ocr_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
-                            ocr_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
-                            ocr_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
-                            body2.OccurDate = ocr_date;
-                            ocr_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
-                            ocr_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
-                            ocr_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
-                            body2.OccurTime = ocr_time;
-                            body2.Route_id = UInt64.Parse(dt.Rows[i][3].ToString());
-                            BIS_POS pos = new BIS_POS();
-
-                            double posx = double.Parse(dt.Rows[i][11].ToString());
-                            posx *= 100;
-                            pos.pos_x = long.Parse(posx.ToString());
-                            double posy = double.Parse(dt.Rows[i][12].ToString());
-                            posy *= 100;
-                            pos.pos_y = long.Parse(posy.ToString());
-                            body2.Pos = pos;
-
-                            body2.heading = ushort.Parse(dt.Rows[i][19].ToString());////////////////////////////////////////
-                            body2.bus_speed = ushort.Parse(dt.Rows[i][10].ToString());
-
-
-                            body2.bnode_id = UInt64.Parse(dt.Rows[i][4].ToString());
-                            body2.brn_seqno = ushort.Parse(dt.Rows[i][5].ToString());
-                            body2.service_time = ushort.Parse(dt.Rows[i][9].ToString());
-                            body2.travel_time = ushort.Parse(dt.Rows[i][8].ToString());
-                            body2.nostop = ushort.Parse(dt.Rows[i][15].ToString());
-                            body2.fdoor_time = ushort.Parse(dt.Rows[i][13].ToString());
-                            body2.bdoor_time = ushort.Parse(dt.Rows[i][14].ToString());
-                            body2.in_heading = ushort.Parse(dt.Rows[i][19].ToString());/////////////////////////////////////////////
-                            body2.dptc_seqno = ushort.Parse(dt.Rows[i][6].ToString());
-                            body2.send_failed = char.Parse(dt.Rows[i][7].ToString()); // BRN_TOTALTIME?
-                                                                                      // body2.cdma_grade = int.Parse(arr[20]); 
-                            body2.Reserved = new byte[2];
-                        }
-                        if (Form2.tt == 2)
-                        {
-                            if (head.opcode == 0x66) //BUSBRNINHISTORY
+                            if (Form2.tt == 0)
                             {
                                 BIS_DATE snd_date = new BIS_DATE();
                                 BIS_TIME snd_time = new BIS_TIME();
@@ -336,28 +230,28 @@ where BRN_OCCURYMDHMS like '2019101408595%'";
                                 ocr_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
                                 ocr_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
                                 body.OccurTime = ocr_time;
-                                body.Route_id = UInt64.Parse(dt.Rows[i][3].ToString());
+                                body.Route_id = UInt64.Parse(dt.Rows[i][2].ToString());
                                 BIS_POS pos = new BIS_POS();
 
-                                double posx = double.Parse(dt.Rows[i][12].ToString());
+                                double posx = double.Parse(dt.Rows[i][10].ToString());
                                 posx *= 100;
                                 pos.pos_x = long.Parse(posx.ToString());
                                 // pos.pos_y = double.Parse(dt.Rows[i][11].ToString());
-                                double posy = double.Parse(dt.Rows[i][13].ToString());
+                                double posy = double.Parse(dt.Rows[i][11].ToString());
                                 posy *= 100;
                                 pos.pos_y = long.Parse(posy.ToString());
                                 body.Pos = pos;
-                                body.heading = ushort.Parse(dt.Rows[i][20].ToString());
-                                body.bus_speed = ushort.Parse(dt.Rows[i][11].ToString());
-                                body.bnode_id = UInt64.Parse(dt.Rows[i][4].ToString());
-                                body.bm_seqno = ushort.Parse(dt.Rows[i][5].ToString());
-                                body.dptc_seqno = ushort.Parse(dt.Rows[i][7].ToString());
-                                body.travel_time = ushort.Parse(dt.Rows[i][9].ToString());
-                                body.sed_failed = char.Parse(dt.Rows[i][8].ToString());  ////
+                                body.heading = ushort.Parse(dt.Rows[i][14].ToString());
+                                body.bus_speed = ushort.Parse(dt.Rows[i][9].ToString());
+                                body.bnode_id = UInt64.Parse(dt.Rows[i][3].ToString());
+                                body.bm_seqno = ushort.Parse(dt.Rows[i][4].ToString());
+                                body.dptc_seqno = ushort.Parse(dt.Rows[i][6].ToString());
+                                body.travel_time = ushort.Parse(dt.Rows[i][8].ToString());
+                                body.sed_failed = char.Parse(dt.Rows[i][7].ToString());  ////
                                                                                          // body.cdma_grade = int.Parse(arr[15]);   //DB값이 null이라 오류,,
                                 body.Reserved = new byte[2];
                             }
-                            if (head.opcode == 0x67)                                  //BUSBRNOUTHISTORY
+                            if (Form2.tt == 1)
                             {
                                 BIS_DATE snd_date = new BIS_DATE();
                                 BIS_TIME snd_time = new BIS_TIME();
@@ -382,78 +276,470 @@ where BRN_OCCURYMDHMS like '2019101408595%'";
                                 body2.Route_id = UInt64.Parse(dt.Rows[i][3].ToString());
                                 BIS_POS pos = new BIS_POS();
 
-                                double posx = double.Parse(dt.Rows[i][12].ToString());
+                                double posx = double.Parse(dt.Rows[i][11].ToString());
                                 posx *= 100;
                                 pos.pos_x = long.Parse(posx.ToString());
-                                double posy = double.Parse(dt.Rows[i][13].ToString());
+                                double posy = double.Parse(dt.Rows[i][12].ToString());
                                 posy *= 100;
                                 pos.pos_y = long.Parse(posy.ToString());
                                 body2.Pos = pos;
 
-                                body2.heading = ushort.Parse(dt.Rows[i][20].ToString());////////////////////////////////////////
-                                body2.bus_speed = ushort.Parse(dt.Rows[i][11].ToString());
+                                body2.heading = ushort.Parse(dt.Rows[i][19].ToString());////////////////////////////////////////
+                                body2.bus_speed = ushort.Parse(dt.Rows[i][10].ToString());
 
 
                                 body2.bnode_id = UInt64.Parse(dt.Rows[i][4].ToString());
                                 body2.brn_seqno = ushort.Parse(dt.Rows[i][5].ToString());
-                                body2.service_time = ushort.Parse(dt.Rows[i][10].ToString());
-                                body2.travel_time = ushort.Parse(dt.Rows[i][9].ToString());
-                                body2.nostop = ushort.Parse(dt.Rows[i][16].ToString());
-                                body2.fdoor_time = ushort.Parse(dt.Rows[i][14].ToString());
-                                body2.bdoor_time = ushort.Parse(dt.Rows[i][15].ToString());
-                                body2.in_heading = ushort.Parse(dt.Rows[i][20].ToString());/////////////////////////////////////////////
-                                body2.dptc_seqno = ushort.Parse(dt.Rows[i][7].ToString());
-                                body2.send_failed = char.Parse(dt.Rows[i][8].ToString()); // BRN_TOTALTIME?
+                                body2.service_time = ushort.Parse(dt.Rows[i][9].ToString());
+                                body2.travel_time = ushort.Parse(dt.Rows[i][8].ToString());
+                                body2.nostop = ushort.Parse(dt.Rows[i][15].ToString());
+                                body2.fdoor_time = ushort.Parse(dt.Rows[i][13].ToString());
+                                body2.bdoor_time = ushort.Parse(dt.Rows[i][14].ToString());
+                                body2.in_heading = ushort.Parse(dt.Rows[i][19].ToString());/////////////////////////////////////////////
+                                body2.dptc_seqno = ushort.Parse(dt.Rows[i][6].ToString());
+                                body2.send_failed = char.Parse(dt.Rows[i][7].ToString()); // BRN_TOTALTIME?
                                                                                           // body2.cdma_grade = int.Parse(arr[20]); 
                                 body2.Reserved = new byte[2];
                             }
-                        }
-                        TAIL tail = new TAIL();
-                        tail.ETX = 0x03;
-
-                        byte bCheckSum = 0x00;
-
-                        List<byte> sendmsg = new List<byte>();
-
-                        sendmsg.AddRange(TcpUtil.ObjectToByte(head));
-                        if (Form2.tt == 0)
-                            sendmsg.AddRange(TcpUtil.ObjectToByte(body));
-                        if (Form2.tt == 1)
-                            sendmsg.AddRange(TcpUtil.ObjectToByte(body2));
-                        if (Form2.tt == 2)
-                        {
-                            if (head.opcode == 0x66)
+                            if (Form2.tt == 2)
                             {
+                                if (head.opcode == 0x66) //BUSBRNINHISTORY
+                                {
+                                    BIS_DATE snd_date = new BIS_DATE();
+                                    BIS_TIME snd_time = new BIS_TIME();
+                                    BIS_DATE ocr_date = new BIS_DATE();
+                                    BIS_TIME ocr_time = new BIS_TIME();
+                                    snd_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
+                                    snd_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
+                                    snd_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
+                                    body.SendDate = snd_date;
+                                    snd_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
+                                    snd_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
+                                    snd_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
+                                    body.SendTime = snd_time;
+                                    ocr_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
+                                    ocr_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
+                                    ocr_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
+                                    body.OccurDate = ocr_date;
+                                    ocr_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
+                                    ocr_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
+                                    ocr_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
+                                    body.OccurTime = ocr_time;
+                                    body.Route_id = UInt64.Parse(dt.Rows[i][3].ToString());
+                                    BIS_POS pos = new BIS_POS();
+
+                                    double posx = double.Parse(dt.Rows[i][12].ToString());
+                                    posx *= 100;
+                                    pos.pos_x = long.Parse(posx.ToString());
+                                    // pos.pos_y = double.Parse(dt.Rows[i][11].ToString());
+                                    double posy = double.Parse(dt.Rows[i][13].ToString());
+                                    posy *= 100;
+                                    pos.pos_y = long.Parse(posy.ToString());
+                                    body.Pos = pos;
+                                    body.heading = ushort.Parse(dt.Rows[i][20].ToString());
+                                    body.bus_speed = ushort.Parse(dt.Rows[i][11].ToString());
+                                    body.bnode_id = UInt64.Parse(dt.Rows[i][4].ToString());
+                                    body.bm_seqno = ushort.Parse(dt.Rows[i][5].ToString());
+                                    body.dptc_seqno = ushort.Parse(dt.Rows[i][7].ToString());
+                                    body.travel_time = ushort.Parse(dt.Rows[i][9].ToString());
+                                    body.sed_failed = char.Parse(dt.Rows[i][8].ToString());  ////
+                                                                                             // body.cdma_grade = int.Parse(arr[15]);   //DB값이 null이라 오류,,
+                                    body.Reserved = new byte[2];
+                                }
+                                if (head.opcode == 0x67)                                  //BUSBRNOUTHISTORY
+                                {
+                                    BIS_DATE snd_date = new BIS_DATE();
+                                    BIS_TIME snd_time = new BIS_TIME();
+                                    BIS_DATE ocr_date = new BIS_DATE();
+                                    BIS_TIME ocr_time = new BIS_TIME();
+                                    snd_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
+                                    snd_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
+                                    snd_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
+                                    body2.SendDate = snd_date;
+                                    snd_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
+                                    snd_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
+                                    snd_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
+                                    body2.SendTime = snd_time;
+                                    ocr_date.yyyy = int.Parse(DateTime.Now.ToString("yyyy"));
+                                    ocr_date.MM = ushort.Parse(DateTime.Now.ToString("MM"));
+                                    ocr_date.dd = ushort.Parse(DateTime.Now.ToString("dd"));
+                                    body2.OccurDate = ocr_date;
+                                    ocr_time.hh = ushort.Parse(DateTime.Now.ToString("hh"));
+                                    ocr_time.mm = ushort.Parse(DateTime.Now.ToString("mm"));
+                                    ocr_time.ss = ushort.Parse(DateTime.Now.ToString("ss"));
+                                    body2.OccurTime = ocr_time;
+                                    body2.Route_id = UInt64.Parse(dt.Rows[i][3].ToString());
+                                    BIS_POS pos = new BIS_POS();
+
+                                    double posx = double.Parse(dt.Rows[i][12].ToString());
+                                    posx *= 100;
+                                    pos.pos_x = long.Parse(posx.ToString());
+                                    double posy = double.Parse(dt.Rows[i][13].ToString());
+                                    posy *= 100;
+                                    pos.pos_y = long.Parse(posy.ToString());
+                                    body2.Pos = pos;
+
+                                    body2.heading = ushort.Parse(dt.Rows[i][20].ToString());////////////////////////////////////////
+                                    body2.bus_speed = ushort.Parse(dt.Rows[i][11].ToString());
+
+
+                                    body2.bnode_id = UInt64.Parse(dt.Rows[i][4].ToString());
+                                    body2.brn_seqno = ushort.Parse(dt.Rows[i][5].ToString());
+                                    body2.service_time = ushort.Parse(dt.Rows[i][10].ToString());
+                                    body2.travel_time = ushort.Parse(dt.Rows[i][9].ToString());
+                                    body2.nostop = ushort.Parse(dt.Rows[i][16].ToString());
+                                    body2.fdoor_time = ushort.Parse(dt.Rows[i][14].ToString());
+                                    body2.bdoor_time = ushort.Parse(dt.Rows[i][15].ToString());
+                                    body2.in_heading = ushort.Parse(dt.Rows[i][20].ToString());/////////////////////////////////////////////
+                                    body2.dptc_seqno = ushort.Parse(dt.Rows[i][7].ToString());
+                                    body2.send_failed = char.Parse(dt.Rows[i][8].ToString()); // BRN_TOTALTIME?
+                                                                                              // body2.cdma_grade = int.Parse(arr[20]); 
+                                    body2.Reserved = new byte[2];
+                                }
+                            }
+                            TAIL tail = new TAIL();
+                            tail.ETX = 0x03;
+
+                            byte bCheckSum = 0x00;
+
+                            List<byte> sendmsg = new List<byte>();
+
+                            sendmsg.AddRange(TcpUtil.ObjectToByte(head));
+                            if (Form2.tt == 0)
                                 sendmsg.AddRange(TcpUtil.ObjectToByte(body));
-                            }
-                            if (head.opcode == 0x67)
-                            {
+                            if (Form2.tt == 1)
                                 sendmsg.AddRange(TcpUtil.ObjectToByte(body2));
+                            if (Form2.tt == 2)
+                            {
+                                if (head.opcode == 0x66)
+                                {
+                                    sendmsg.AddRange(TcpUtil.ObjectToByte(body));
+                                }
+                                if (head.opcode == 0x67)
+                                {
+                                    sendmsg.AddRange(TcpUtil.ObjectToByte(body2));
+                                }
                             }
-                        }
-                        for (int a = 0; a < sendmsg.Count; a++)
-                        {
-                            bCheckSum ^= sendmsg[a];
-                        }
-                        tail.Checksum = bCheckSum;
+                            for (int a = 0; a < sendmsg.Count; a++)
+                            {
+                                bCheckSum ^= sendmsg[a];
+                            }
+                            tail.Checksum = bCheckSum;
 
-                        sendmsg.AddRange(TcpUtil.ObjectToByte(tail));
-                        var sb = new System.Text.StringBuilder();
-                        for (int k = 0; k < sendmsg.Count; k++)
-                        {
-                            sb.AppendLine(sendmsg[k].ToString());
+                            sendmsg.AddRange(TcpUtil.ObjectToByte(tail));
+                            var sb = new System.Text.StringBuilder();
+                            for (int k = 0; k < sendmsg.Count; k++)
+                            {
+                                sb.AppendLine(sendmsg[k].ToString());
+                            }
+                            listBox1.Items.Add(sb.ToString());
+                            listBox1.SelectedIndex = listBox1.Items.Count - 1;
+                            BISSendMsg(sendmsg.ToArray());
+                            Delay(500);
                         }
-                        listBox1.Items.Add(sb.ToString());
-                        listBox1.SelectedIndex = listBox1.Items.Count - 1;
-                        SendMsg(sendmsg.ToArray());
-                        Delay(500);
+                        else
+                        {
+                        
+                            ASC_HEAD head = new ASC_HEAD();
+                            if (Form2.tt == 0)
+                            {
+                                head.opcode = cut(2, "66");
+                                head.length = cut(4, Marshal.SizeOf<ASC_OP_66>().ToString());
+                            }
+                            if (Form2.tt == 1)
+                            {
+                                head.opcode = cut(2, "67");
+                                head.length = cut(4, Marshal.SizeOf<ASC_OP_67>().ToString());
+                            }
+                            if (Form2.tt == 2)
+                            {
+                                if (string.IsNullOrEmpty(dt.Rows[i][14].ToString())) //BUSBRNINHISTORY
+                                {
+                                    head.opcode = cut(2, "66");
+                                    head.length = cut(4, Marshal.SizeOf<ASC_OP_66>().ToString());
+                                }
+                                else                                  //BUSBRNOUTHISTORY
+                                {
+                                    head.opcode = cut(2, "67");
+                                    head.length = cut(4, Marshal.SizeOf<ASC_OP_67>().ToString());
+                                }
+                            }
+                            head.bid_no = cut(4, dt.Rows[i][0].ToString());
 
+                            ASC_OP_66 body = new ASC_OP_66();
+                            ASC_OP_67 body2 = new ASC_OP_67();
+
+                            if (Form2.tt == 0)
+                            {
+                                ASC_DATE snd_date = new ASC_DATE();
+                                ASC_TIME snd_time = new ASC_TIME();
+                                ASC_DATE ocr_date = new ASC_DATE();
+                                ASC_TIME ocr_time = new ASC_TIME();
+                                snd_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                snd_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                snd_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                body.SendDate = snd_date;
+                                snd_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                snd_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                snd_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                body.SendTime = snd_time;
+                                ocr_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                ocr_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                ocr_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                body.OccurDate = ocr_date;
+                                ocr_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                ocr_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                ocr_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                body.OccurTime = ocr_time;
+                                body.Route_id = cut(10, dt.Rows[i][2].ToString());
+                                ASC_POS pos = new ASC_POS();
+
+                                double posx = double.Parse(dt.Rows[i][10].ToString());
+                                posx *= 100;
+                                pos.pos_x = cut(8, posx.ToString());
+
+                                double posy = double.Parse(dt.Rows[i][11].ToString());
+                                posy *= 100;
+                                pos.pos_y = cut(8, posy.ToString());
+
+                                body.Pos = pos;
+                                body.heading = cut(3, dt.Rows[i][14].ToString());
+                                body.bus_speed = cut(3, dt.Rows[i][9].ToString());
+                                body.bnode_id = cut(10, dt.Rows[i][3].ToString());
+                                body.brn_seqno = cut(3, dt.Rows[i][4].ToString());
+                                body.dptc_seqno = cut(2, dt.Rows[i][6].ToString());
+                                body.travel_time = cut(4, dt.Rows[i][8].ToString());
+                                //body.bop_stat;  ////
+                                // body.cdma_grade = cut(4, dt.Rows[i][15].ToString());   //DB값이 null이라 오류,,
+                                // body.Reserved = new byte[2];
+                            }
+
+                            if (Form2.tt == 1)
+                            {
+                                ASC_DATE snd_date = new ASC_DATE();
+                                ASC_TIME snd_time = new ASC_TIME();
+                                ASC_DATE ocr_date = new ASC_DATE();
+                                ASC_TIME ocr_time = new ASC_TIME();
+                                snd_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                snd_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                snd_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                body2.SendDate = snd_date;
+                                snd_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                snd_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                snd_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                body2.SendTime = snd_time;
+                                ocr_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                ocr_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                ocr_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                body2.OccurDate = ocr_date;
+                                ocr_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                ocr_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                ocr_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                body2.OccurTime = ocr_time;
+                                body2.Route_id = cut(10, dt.Rows[i][3].ToString());
+                                ASC_POS pos = new ASC_POS();
+
+                                double posx = double.Parse(dt.Rows[i][10].ToString());
+                                posx *= 100;
+                                pos.pos_x = cut(8, posx.ToString());
+                                double posy = double.Parse(dt.Rows[i][11].ToString());
+                                posy *= 100;
+                                pos.pos_y = cut(8, posy.ToString());
+                                body2.Pos = pos;
+
+
+                                body2.heading = cut(3, dt.Rows[i][19].ToString());////////////////////////////////////////
+                                body2.bus_speed = cut(3, dt.Rows[i][10].ToString());
+                                body2.bnode_id = cut(10, dt.Rows[i][4].ToString());
+                                body2.brn_seqno = cut(3, dt.Rows[i][5].ToString());
+                                body2.service_time = cut(4, dt.Rows[i][9].ToString());
+                                body2.travel_time = cut(4, dt.Rows[i][8].ToString());
+                                body2.nostop = cut(1, dt.Rows[i][15].ToString());
+                                body2.fdoor_time = cut(4, dt.Rows[i][13].ToString());
+                                body2.bdoor_time = cut(4, dt.Rows[i][14].ToString());
+                                //  body2.in_heading = cut(3, dt.Rows[i][19].ToString());/////////////////////////////////////////////
+                                body2.dptc_seqno = cut(2, dt.Rows[i][6].ToString());
+                                // body2.send_failed = char.Parse(dt.Rows[i][7].ToString()); // BRN_TOTALTIME?
+                                //body2.cdma_grade = cut(4, dt.Rows[i][20].ToString());
+                                body2.Reserved = new byte[2];
+
+
+                            }
+
+                            if (Form2.tt == 2)
+                            {
+                                if (string.IsNullOrEmpty(dt.Rows[i][14].ToString())) //BUSBRNINHISTORY
+                                {
+                                    ASC_DATE snd_date = new ASC_DATE();
+                                    ASC_TIME snd_time = new ASC_TIME();
+                                    ASC_DATE ocr_date = new ASC_DATE();
+                                    ASC_TIME ocr_time = new ASC_TIME();
+                                    snd_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                    snd_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                    snd_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                    body.SendDate = snd_date;
+                                    snd_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                    snd_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                    snd_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                    body.SendTime = snd_time;
+                                    ocr_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                    ocr_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                    ocr_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                    body.OccurDate = ocr_date;
+                                    ocr_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                    ocr_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                    ocr_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                    body.OccurTime = ocr_time;
+                                    body.Route_id = cut(10, dt.Rows[i][3].ToString());
+                                    ASC_POS pos = new ASC_POS();
+
+                                    double posx = double.Parse(dt.Rows[i][12].ToString());
+                                    posx *= 100;
+                                    pos.pos_x = cut(8, posx.ToString());
+                                    double posy = double.Parse(dt.Rows[i][13].ToString());
+                                    posy *= 100;
+                                    pos.pos_y = cut(8, posy.ToString());
+                                    body.Pos = pos;
+                                    body.heading = cut(3, dt.Rows[i][20].ToString());
+                                    body.bus_speed = cut(3, dt.Rows[i][11].ToString());
+                                    body.bnode_id = cut(10, dt.Rows[i][4].ToString());
+                                    body.brn_seqno = cut(3, dt.Rows[i][5].ToString());
+                                    body.dptc_seqno = cut(2, dt.Rows[i][7].ToString());
+                                    body.travel_time = cut(4, dt.Rows[i][9].ToString());
+                                    //body.bop_stat;  ////
+                                    // body.cdma_grade = cut(4, dt.Rows[i][15].ToString());   //DB값이 null이라 오류,,
+                                    // body.Reserved = new byte[2];
+                                }
+                                else                                 //BUSBRNOUTHISTORY
+                                {
+                                    ASC_DATE snd_date = new ASC_DATE();
+                                    ASC_TIME snd_time = new ASC_TIME();
+                                    ASC_DATE ocr_date = new ASC_DATE();
+                                    ASC_TIME ocr_time = new ASC_TIME();
+                                    snd_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                    snd_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                    snd_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                    body2.SendDate = snd_date;
+                                    snd_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                    snd_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                    snd_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                    body2.SendTime = snd_time;
+                                    ocr_date.yyyy = cut(2, DateTime.Now.ToString("yyyy"));
+                                    ocr_date.MM = cut(2, DateTime.Now.ToString("MM"));
+                                    ocr_date.dd = cut(2, DateTime.Now.ToString("dd"));
+                                    body2.OccurDate = ocr_date;
+                                    ocr_time.hh = cut(2, DateTime.Now.ToString("hh"));
+                                    ocr_time.mm = cut(2, DateTime.Now.ToString("mm"));
+                                    ocr_time.ss = cut(2, DateTime.Now.ToString("ss"));
+                                    body2.OccurTime = ocr_time;
+                                    body2.Route_id = cut(10, dt.Rows[i][3].ToString());
+                                    ASC_POS pos = new ASC_POS();
+
+                                    double posx = double.Parse(dt.Rows[i][12].ToString());
+                                    posx *= 100;
+                                    pos.pos_x = cut(8, posx.ToString());
+                                    double posy = double.Parse(dt.Rows[i][13].ToString());
+                                    posy *= 100;
+                                    pos.pos_y = cut(8, posy.ToString());
+                                    body2.Pos = pos;
+
+
+                                    body2.heading = cut(3, dt.Rows[i][20].ToString());////////////////////////////////////////
+                                    body2.bus_speed = cut(3, dt.Rows[i][11].ToString());
+                                    body2.bnode_id = cut(10, dt.Rows[i][4].ToString());
+                                    body2.brn_seqno = cut(3, dt.Rows[i][5].ToString());
+                                    body2.service_time = cut(4, dt.Rows[i][10].ToString());
+                                    body2.travel_time = cut(4, dt.Rows[i][9].ToString());
+                                    body2.nostop = cut(1, dt.Rows[i][16].ToString());
+                                    body2.fdoor_time = cut(4, dt.Rows[i][14].ToString());
+                                    body2.bdoor_time = cut(4, dt.Rows[i][15].ToString());
+                                    //  body2.in_heading = cut(3, dt.Rows[i][20].ToString());/////////////////////////////////////////////
+                                    body2.dptc_seqno = cut(2, dt.Rows[i][7].ToString());
+                                    // body2.send_failed = char.Parse(dt.Rows[i][7].ToString()); // BRN_TOTALTIME?
+                                    //body2.cdma_grade = cut(4, dt.Rows[i][20].ToString());
+                                    body2.Reserved = new byte[2];
+                                }
+                            }
+
+                            ASC_TAIL tail = new ASC_TAIL();
+                            // tail.ETX = 'E';
+
+                            byte bCheckSum = 0x00;
+
+                            List<byte> sendmsg = new List<byte>();
+
+
+                            sendmsg.AddRange(TcpUtil.ObjectToByte(head));
+                            if (Form2.tt == 0)
+                                sendmsg.AddRange(TcpUtil.ObjectToByte(body));
+
+                            if (Form2.tt == 1)
+                                sendmsg.AddRange(TcpUtil.ObjectToByte(body2));
+                            if (Form2.tt == 2)
+                            {
+                                if (string.IsNullOrEmpty(dt.Rows[i][14].ToString())) //BUSBRNINHISTORY
+                                {
+                                    sendmsg.AddRange(TcpUtil.ObjectToByte(body));
+                                }
+                                else                                 //BUSBRNOUTHISTORY
+                                {
+                                    sendmsg.AddRange(TcpUtil.ObjectToByte(body2));
+                                }
+                            }
+                            for (int a = 0; a < sendmsg.Count; a++)
+                            {
+                                bCheckSum ^= sendmsg[a];
+                            }
+                            tail.Checksum = bCheckSum;
+
+
+
+                            //    sendmsg.AddRange(TcpUtil.ObjectToByte(tail));
+
+
+
+                            var sb = new System.Text.StringBuilder();
+                            SendMsg("S");
+                            for (int k = 0; k < sendmsg.Count; k++)
+                            {
+
+                                sb.AppendLine(sendmsg[k].ToString());
+                                SendMsg(sendmsg[k].ToString());
+                            }
+                            SendMsg(bCheckSum.ToString());
+                            SendMsg("E");
+
+
+                            listBox1.Items.Add(sb.ToString());
+                            listBox1.SelectedIndex = listBox1.Items.Count - 1;
+
+                            Delay(5000);
+
+                        }
                     }
                 }
             }
         }
 
-        private void SendMsg(byte[] msg)
+        private void SendMsg(string msg)
+        {
+            try
+            {
+                if(tc.Connected == true)
+                {
+                    string a = msg;
+                    byte[] sendbuf = Encoding.ASCII.GetBytes(a);
+                    NetworkStream stream = tc.GetStream();
+                    stream.Write(sendbuf, 0, sendbuf.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                tc.Close();
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void BISSendMsg(byte[] msg)
         {
 
             try
@@ -474,6 +760,18 @@ where BRN_OCCURYMDHMS like '2019101408595%'";
                 tc.Close();
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        public static char[] cut(int a, string table)
+        {
+            char[] result = new char[a];
+            int temp = int.Parse(table);
+            for(int i = 0; i < a; a--)
+            {
+                result[a - 1] = Convert.ToChar(temp % 10);
+                temp = temp / 10;
+            }
+            return result;
         }
         
         private bool Connect()

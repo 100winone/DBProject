@@ -15,6 +15,7 @@ namespace DBProject
 
         public static int sel; // 전송 종류 선택
         public static int tt; // 데이터 선택
+        public static int asc; // ascii or binary
         public static string bbus;
 
         public ArrayList nbus = new ArrayList();
@@ -74,17 +75,19 @@ namespace DBProject
             }
 
             comboBox1.Items.Add("기본 전송");
-            comboBox1.SelectedIndex = 0;
             comboBox1.Items.Add("시간별 전송");
             comboBox1.Items.Add("버스번호별 전송");
-
+            comboBox1.SelectedIndex = 0;
 
             comboBox2.Items.Add("BUSBRNINHISTORY");
-            comboBox2.SelectedIndex = 0;
             comboBox2.Items.Add("BUSBRNOUTHISTORY");
             comboBox2.Items.Add("둘다 전송");
-            
-            
+            comboBox2.SelectedIndex = 0;
+
+            comboBox3.Items.Add("Binary 전송");
+            comboBox3.Items.Add("ASCII 전송");
+            comboBox3.SelectedIndex = 0;
+
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -95,6 +98,11 @@ namespace DBProject
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             tt = comboBox2.SelectedIndex;
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            asc = comboBox3.SelectedIndex;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -112,5 +120,7 @@ namespace DBProject
                 checkAll = true;
             }
         }
+
+        
     }
 }

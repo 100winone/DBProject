@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Control\ASCProtocolcs.cs" />
     <Compile Include="Control\Protocol.cs" />
     <Compile Include="Control\ResponseBUS.cs" />
     <Compile Include="Control\TcpUtil.cs" />
