@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.picBoxDBState = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -59,6 +61,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.button5);
+            this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.picBoxDBState);
             this.groupBox1.Controls.Add(this.button1);
@@ -71,6 +75,30 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "서버접속 상태";
+            // 
+            // button5
+            // 
+            this.button5.Enabled = false;
+            this.button5.Location = new System.Drawing.Point(943, 20);
+            this.button5.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(86, 29);
+            this.button5.TabIndex = 8;
+            this.button5.Text = "연결끊기";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button4
+            // 
+            this.button4.Enabled = false;
+            this.button4.Location = new System.Drawing.Point(1059, 20);
+            this.button4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(131, 29);
+            this.button4.TabIndex = 7;
+            this.button4.Text = "일시정지 / 전송";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -157,6 +185,8 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button4;
     }
 }
 

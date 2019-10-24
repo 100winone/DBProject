@@ -30,6 +30,8 @@ namespace DBProject
         public static ArrayList packetlist = new ArrayList();
         public static string sql;
         public DataTable dt;
+        public static bool isbreak;
+        public static bool isrun;
         TcpClient tc;
         NetworkStream ns1;
         //int i;
@@ -45,51 +47,90 @@ namespace DBProject
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Form2.tt == 0)
+            if (Form2.check == 1)   // 버스번호 선택 o
             {
-                if (Form2.sel == 0)               
-                    sql = "select*from BUSBRNINHISTORY";     
-                if (Form2.sel == 1)
-                    sql = "select* from BUSBRNINHISTORY where BRN_OCCURYMDHMS like '2019101408%' ORDER BY BRN_OCCURYMDHMS ASC";
-                if (Form2.sel == 2)
-                    sql = "select* from BUSBRNINHISTORY where  BID_NO IN (" + Form2.bbus + ") ORDER BY BRN_OCCURYMDHMS ASC";
-            }
-            if (Form2.tt == 1)
-            {
-                if (Form2.sel == 0)
-                    sql = "select*from BUSBRNOUTHISTORY";
-                if (Form2.sel == 1)
-                    sql = "select* from BUSBRNOUTHISTORY where BRN_OCCURYMDHMS like '2019101408%' ORDER BY BRN_OCCURYMDHMS ASC";
-                if (Form2.sel == 2)
-                    sql = "select* from BUSBRNOUTHISTORY where  BID_NO IN (" + Form2.bbus + ") ORDER BY BRN_OCCURYMDHMS ASC";
-            }
-            if (Form2.tt == 2)
-            {
-                if (Form2.sel == 0)
+                if (Form2.sel == 0)    // 기본전송
                 {
-                    sql = @"SELECT*FROM(SELECT BID_NO, BRN_OCCURYMDHMS, BRN_RCVROUTE, BRT_ID, BNODE_ID, BRN_SEQNO, NULL, BRN_DETECTSEQNO, BRN_TOTALTIME, 
-BRN_TRAVELTIME, BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONSTOP, BRN_INYMDHMS, BRN_SENDYMDHMS, BRN_RCVYMDHMS, 
-BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNOUTHISTORY UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, 
-BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, 
-CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY) where BRN_OCCURYMDHMS like '2019101408595%'";
-                }
-                if (Form2.sel == 1)
-                {
-                    sql = @"SELECT*FROM(SELECT BID_NO, BRN_OCCURYMDHMS, BRN_RCVROUTE, BRT_ID, BNODE_ID, BRN_SEQNO, NULL, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, 
+                    if (Form2.tt == 0)     // BUSBRNINHISTORY
+                    {
+                        sql = "select* from BUSBRNINHISTORY where BID_NO IN (" + Form2.bbus + ") AND BRN_OCCURYMDHMS like '" + Form2.date + "%'";
+                    }
+                    if (Form2.tt == 1)      // BUSBRNOUTHISTORY
+                    {
+                        sql = "select* from BUSBRNOUTHISTORY where BID_NO IN (" + Form2.bbus + ") AND BRN_OCCURYMDHMS like '" + Form2.date + "%'";
+                    }
+                    if (Form2.tt == 2)     // 테이블 둘다 전송
+                    {
+                        sql = @"SELECT*FROM(SELECT BID_NO, BRN_OCCURYMDHMS, BRN_RCVROUTE, BRT_ID, BNODE_ID, BRN_SEQNO, NULL, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, 
 BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONSTOP, BRN_INYMDHMS, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 
 FROM BUSBRNOUTHISTORY 
 UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, 
 BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY)
-where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BRN_OCCURYMDHMS ASC";
+ where BID_NO IN (" + Form2.bbus + ") AND BRN_OCCURYMDHMS like '" + Form2.date + "%'";
+                    }
                 }
-                if (Form2.sel == 2)
+                if (Form2.sel == 1)    // 시간별 전송
                 {
-                    sql = @"SELECT*FROM(SELECT BID_NO, BRN_OCCURYMDHMS, BRN_RCVROUTE, BRT_ID, BNODE_ID, BRN_SEQNO, NULL, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, 
+                    if (Form2.tt == 0)     // BUSBRNINHISTORY
+                    {
+                        sql = "select* from BUSBRNINHISTORY where BID_NO IN (" + Form2.bbus + ") AND BRN_OCCURYMDHMS like '" + Form2.date + "%' ORDER BY BRN_OCCURYMDHMS ASC";
+                    }
+                    if (Form2.tt == 1)      // BUSBRNOUTHISTORY
+                    {
+                        sql = "select* from BUSBRNOUTHISTORY where BID_NO IN (" + Form2.bbus + ") AND BRN_OCCURYMDHMS like '" + Form2.date + "%' ORDER BY BRN_OCCURYMDHMS ASC";
+                    }
+                    if (Form2.tt == 2)     // 테이블 둘다 전송
+                    {
+                        sql = @"SELECT*FROM(SELECT BID_NO, BRN_OCCURYMDHMS, BRN_RCVROUTE, BRT_ID, BNODE_ID, BRN_SEQNO, NULL, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, 
 BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONSTOP, BRN_INYMDHMS, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 
 FROM BUSBRNOUTHISTORY 
 UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, 
 BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY)
- where  BID_NO IN (" + Form2.bbus + ") ORDER BY BRN_OCCURYMDHMS ASC";
+ where BID_NO IN (" + Form2.bbus + ") ORDER BY BRN_OCCURYMDHMS ASC";
+                    }
+                }
+            }
+            else                    // 버스번호 선택 x >> 전체전송
+            {
+                if (Form2.sel == 0)    // 기본전송
+                {
+                    if (Form2.tt == 0)     // BUSBRNINHISTORY
+                    {
+                        sql = "select*from BUSBRNINHISTORY where BRN_OCCURYMDHMS like '" + Form2.date + "%'";
+                    }
+                    if (Form2.tt == 1)      // BUSBRNOUTHISTORY
+                    {
+                        sql = "select*from BUSBRNOUTHISTORY where BRN_OCCURYMDHMS like '" + Form2.date + "%'";
+                    }
+                    if (Form2.tt == 2)     // 테이블 둘다 전송
+                    {
+                        sql = @"SELECT*FROM(SELECT BID_NO, BRN_OCCURYMDHMS, BRN_RCVROUTE, BRT_ID, BNODE_ID, BRN_SEQNO, NULL, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, 
+BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONSTOP, BRN_INYMDHMS, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 
+FROM BUSBRNOUTHISTORY 
+UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, 
+BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY)
+where BRN_OCCURYMDHMS like '" + Form2.date + "%'";
+                    }
+                }
+                if (Form2.sel == 1)    // 시간별 전송
+                {
+                    if (Form2.tt == 0)     // BUSBRNINHISTORY
+                    {
+                        sql = "select* from BUSBRNINHISTORY where BRN_OCCURYMDHMS like '" + Form2.date + "%' ORDER BY BRN_OCCURYMDHMS ASC";
+                    }
+                    if (Form2.tt == 1)      // BUSBRNOUTHISTORY
+                    {
+                        sql = "select* from BUSBRNOUTHISTORY where BRN_OCCURYMDHMS like '" + Form2.date + "%' ORDER BY BRN_OCCURYMDHMS ASC";
+                    }
+                    if (Form2.tt == 2)     // 테이블 둘다 전송
+                    {
+                        sql = @"SELECT*FROM(SELECT BID_NO, BRN_OCCURYMDHMS, BRN_RCVROUTE, BRT_ID, BNODE_ID, BRN_SEQNO, NULL, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, 
+BRN_SERVICETIME, BRN_SPEED, BRN_X, BRN_Y, BRN_FDOORTIME, BRN_BDOORTIME, BRN_NONSTOP, BRN_INYMDHMS, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 
+FROM BUSBRNOUTHISTORY 
+UNION ALL SELECT BID_NO, BRN_OCCURYMDHMS, NULL, BRT_ID, BNODE_ID, BRN_SEQNO, BRS_SEQNO, BRN_DETECTSEQNO, BRN_TOTALTIME, BRN_TRAVELTIME, NULL, 
+BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, BRN_ANGLE, CDMA_GRADE, BRN_X2, BRN_Y2 FROM BUSBRNINHISTORY)
+where BRN_OCCURYMDHMS like'" + Form2.date + "%' ORDER BY BRN_OCCURYMDHMS ASC";
+                    }
                 }
             }
             DBConnect dbConnect = new DBConnect();
@@ -100,12 +141,10 @@ BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, 
                 if (dt == null)
                 {
                     listBox1.Items.Add("연결실패");
-                    Form2.isrun = false;
                 }
                     
                 else
                 {
-                    Form2.isrun = true;
                     listBox1.Items.Add("연결성공");
                 }
                     
@@ -118,14 +157,23 @@ BRN_SPEED, BRN_X, BRN_Y, NULL, NULL, NULL, NULL, BRN_SENDYMDHMS, BRN_RCVYMDHMS, 
         }
         private void button2_Click(object sender, EventArgs e)
         {
-                LoadDB();        
+            button4.Enabled = true;
+            button5.Enabled = true;
+            LoadDB();        
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            timer1.Interval = 1000;
+            timer1.Start();
+            Form2.date = null;
             Form2.sel = 0;
             Form2.tt = 0;
             Form2.asc = 0;
+            string da = "5000";
+            Form2.delay = da;
+            isbreak = false;
+            isrun = false;
             string url = Environment.CurrentDirectory + @"..\..\Config.xml";
             try
             {
@@ -162,10 +210,6 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
                 if (!busnum.Contains(Convert.ToString(dt.Rows[i][0])))
                     busnum.Add(dt.Rows[i][0]);
             }
-
-            timer1.Interval = 1000;
-            timer1.Start();
-            Form2.isrun = false;
         }
 
 
@@ -179,6 +223,8 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             {
                 for(int z = 0; z < dt.Columns.Count; z++)
                 {
+                    if (isrun == false) break;
+
                     arr[z] = dt.Rows[i][z].ToString();
                     if (z == dt.Columns.Count - 1)
                     {
@@ -440,16 +486,26 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
                             tail.Checksum = bCheckSum;
 
                             sendmsg.AddRange(TcpUtil.ObjectToByte(tail));
+
+                            while(isbreak == true)
+                            {
+                                Delay(100);
+                            }
+                            if (isrun == false)
+                                break;
+
                             var sb = new System.Text.StringBuilder();
                             for (int k = 0; k < sendmsg.Count; k++)
                             {
                                 sb.AppendLine(sendmsg[k].ToString());
                             }
+
                             listBox1.Items.Add(sb.ToString());
                             listBox1.SelectedIndex = listBox1.Items.Count - 1;
                             BISSendMsg(sendmsg.ToArray());
-                            Delay(500);
+                            Delay(Convert.ToInt32(Form2.delay));
                         }
+
                         else
                         {
                         
@@ -710,6 +766,11 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
                             //    sendmsg.AddRange(TcpUtil.ObjectToByte(tail));
 
 
+                            while(isbreak == true)
+                            {
+                                Delay(100);
+                            }
+                            if (isrun == false) break;
 
                             var sb = new System.Text.StringBuilder();
                             SendMsg("S");
@@ -726,7 +787,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
                             listBox1.Items.Add(sb.ToString());
                             listBox1.SelectedIndex = listBox1.Items.Count - 1;
 
-                            Delay(5000);
+                            Delay(Convert.ToInt32(Form2.delay));
 
                         }
                     }
@@ -740,7 +801,6 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             {
                 if(tc.Connected == true)
                 {
-                    Form2.isrun = true;
                     string a = msg;
                     byte[] sendbuf = Encoding.ASCII.GetBytes(a);
                     NetworkStream stream = tc.GetStream();
@@ -749,8 +809,8 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             }
             catch (Exception ex)
             {
+                isrun = false;
                 tc.Close();
-                Form2.isrun = false ;
                 MessageBox.Show(ex.Message);
             }
         }
@@ -761,8 +821,10 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             {
                 if (tc.Connected == true)
                 {
-                    
+                    isrun = true;
+
                     byte[] sendbuf = msg;
+
                     NetworkStream stream = tc.GetStream();
                     stream.Write(sendbuf, 0, sendbuf.Length);
                     //Delay(500);
@@ -773,17 +835,15 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
 
             catch (Exception ex)
             {
+                isrun = false;
                 tc.Close();
-                Form2.isrun = true;
                 MessageBox.Show(ex.Message);
             }
-            Form2.isrun = false;
         }
-
         public static char[] cut(int a, string table)
         {
             char[] result = new char[a];
-            int temp = int.Parse(table);
+            uint temp = uint.Parse(table);
             for(int i = 0; i < a; a--)
             {
                 result[a - 1] = Convert.ToChar(temp % 10);
@@ -801,7 +861,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
                 bResult = tc.Connected;
                 if (tc.Connected)
                 {
-                    Form2.isrun = true;
+                    isrun = true;
                     ns1 = tc.GetStream();
                 }
             }
@@ -816,7 +876,7 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (Form2.isrun == true)
+            if (isrun == true)
             {
                 picBoxDBState.Image = Properties.Resources.On;
             }
@@ -824,6 +884,28 @@ where BRN_OCCURYMDHMS like '2019101408595%' ORDER BY BID_NO ASC";
             {
                 picBoxDBState.Image = Properties.Resources.Off;
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (isbreak == true)
+                isbreak = false;
+            else
+                isbreak = true;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            sql = null;
+            dt.Clear();
+            listBox1.Items.Clear();
+            tc.Close();
+            isrun = false;
+            isbreak = false;
+            button1.Enabled = false;
+            button2.Enabled = false;
+            button4.Enabled = false;
+            button5.Enabled = false;
         }
 
         public static byte[] ToByteArray(String hex)

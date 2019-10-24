@@ -16,8 +16,11 @@ namespace DBProject
         public static int sel; // 전송 종류 선택
         public static int tt; // 데이터 선택
         public static int asc; // ascii or binary
+        public static int check;
         public static string bbus;
-        public static bool isrun;
+        public static string date;
+        public static string delay;
+
         public ArrayList nbus = new ArrayList();
         public ArrayList nbbus = new ArrayList();
         int i;
@@ -36,6 +39,7 @@ namespace DBProject
                 if (checkedListBox1.GetItemChecked(i))
                 {
                     nbus.Add(i);
+                    check = 1;
                     continue;
                 }
             }
@@ -57,17 +61,21 @@ namespace DBProject
 
 
             }
+            if (textBox1.Text != null && textBox1.Text != "")
+                date = textBox1.Text;
+            if (textBox2.Text != null && textBox2.Text != "")
+                delay = textBox2.Text;
 
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();
+            comboBox3.Items.Clear();
             checkedListBox1.Items.Clear();
             this.Close();
         }
 
         private void Form2_Load(object sender, EventArgs e)
         {
-
-            
+            check = 0;
             bbus = null;
             for (int i = 0; i < Form1.busnum.Count; i++)
             {
@@ -76,7 +84,6 @@ namespace DBProject
 
             comboBox1.Items.Add("기본 전송");
             comboBox1.Items.Add("시간별 전송");
-            comboBox1.Items.Add("버스번호별 전송");
             comboBox1.SelectedIndex = 0;
 
             comboBox2.Items.Add("BUSBRNINHISTORY");
